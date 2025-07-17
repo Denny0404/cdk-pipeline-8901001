@@ -30,7 +30,7 @@ export class CdkAppStack extends cdk.Stack {
           console.log("Lambda invoked");
           return {
             statusCode: 200,
-            body: "Hello from Lambda and CDK!"
+            body: "Hello from CI/CD Pipeline!"
           };
         };
       `),
