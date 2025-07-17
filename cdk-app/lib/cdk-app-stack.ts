@@ -9,30 +9,40 @@ export class CdkAppStack extends cdk.Stack {
     super(scope, id, props);
 
     // ✅ S3 Bucket
-    const myBucket = new s3.Bucket(this, 'MyBucket8901001', {
+    const myBucket = new s3.Bucket(this, 'StudentBucket8901001', {
       versioned: true,
-      removalPolicy: cdk.RemovalPolicy.DESTROY, // auto-delete on stack removal
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    // ✅ DynamoDB Table
+    const myTable = new dynamodb.Table(this, 'StudentTable8901001', {
+      partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
+      tableName: 'StudentRecords8901001',
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
     // ✅ Lambda Function
-    const myLambda = new lambda.Function(this, 'MyLambda8901001', {
+    const myLambda = new lambda.Function(this, 'StudentLambda8901001', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'index.handler',
       code: lambda.Code.fromInline(`
         exports.handler = async function(event) {
-          console.log("Lambda triggered");
-          return { statusCode: 200, body: "Hello from Lambda!" };
+          console.log("Lambda invoked");
+          return {
+            statusCode: 200,
+            body: "Hello from Lambda and CDK!"
+          };
         };
       `),
       environment: {
         BUCKET_NAME: myBucket.bucketName,
+        TABLE_NAME: myTable.tableName,
       },
     });
 
-    // ✅ DynamoDB Table
-    const myTable = new dynamodb.Table(this, 'MyTable8901001', {
-      partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
-    });
+    // Grant Lambda access to read/write DynamoDB
+    myTable.grantReadWriteData(myLambda);
+    // Grant Lambda access to S3
+    myBucket.grantReadWrite(myLambda);
   }
 }
