@@ -115,7 +115,6 @@ artifacts:
 
 ## 📬 Submission Summary
 
-- ✅ GitHub Repo: [https://github.com/denishakbari/cdk-pipeline-8901001](#) *(replace with actual link)*
 - ✅ All AWS resources deployed with CDK
 - ✅ CI/CD pipeline fully functional
 - ✅ Verified and tested with code updates
